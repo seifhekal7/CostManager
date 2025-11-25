@@ -213,5 +213,5 @@ This project may be used and modified freely unless otherwise specified.
 ## Developer
 
 Seif Hekal 
-GitHub: www.linkedin.com/in/seifhekal7
+Linkedin: www.linkedin.com/in/seifhekal7
 Email: seifhekal7@gmail.com
