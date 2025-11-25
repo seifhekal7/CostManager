@@ -202,7 +202,7 @@ serializer.save(user=request.user)
 ### Budget Validation
 The system validates monthly spending:
 - Sums all expenses for the selected month
-- Raises an error if spending exceeds the budget
+
 
 ---
 
