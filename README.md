@@ -214,6 +214,6 @@ This project may be used and modified freely unless otherwise specified.
 
 ## Developer
 
-Your Name  
+Seif Hekal 
 GitHub: www.linkedin.com/in/seifhekal7
 Email: seifhekal7@gmail.com
