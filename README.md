@@ -39,7 +39,6 @@ The application enforces strict data isolation, ensuring users can access only t
 - Automatic calculation of:
   - Total spent in a given month
   - Remaining amount
-- Prevention of expenses exceeding the assigned budget
 
 ### Category Management
 - User-specific categories
@@ -203,7 +202,6 @@ serializer.save(user=request.user)
 The system validates monthly spending:
 - Sums all expenses for the selected month
 
-
 ---
 
 ## License
@@ -214,6 +212,6 @@ This project may be used and modified freely unless otherwise specified.
 
 ## Developer
 
-Your Name  
+Seif Hekal 
 GitHub: www.linkedin.com/in/seifhekal7
 Email: seifhekal7@gmail.com
