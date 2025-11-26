@@ -39,6 +39,7 @@ The application enforces strict data isolation, ensuring users can access only t
 - Automatic calculation of:
   - Total spent in a given month
   - Remaining amount
+- Prevent spending beyond budget (validation logic built-in)
 
 ### Category Management
 - User-specific categories

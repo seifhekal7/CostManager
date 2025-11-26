@@ -10,23 +10,12 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description']
 
 class ExpenseSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)  # GET only
+    category = CategorySerializer(read_only=True)  # GET فقط
     category_id = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(),
         source='category',
         write_only=True
     )
-    def validate(self, data):
-        user = self.context['request'].user
-        category = data.get('category') or getattr(self.instance, 'category', None)
-        amount = data.get('amount') or getattr(self.instance, 'amount', None)
-
-        if self.instance:
-            date = self.instance.date
-        else:
-            date = timezone.now().date()
-
-        return data
 
     class Meta:
         model = Expense
@@ -38,11 +27,56 @@ class ExpenseSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['date', 'created_at', 'updated_at']
 
+    def validate(self, data):
+        request = self.context.get('request')
+        user = request.user
+
+        category = data.get('category') or getattr(self.instance, 'category', None)
+        amount = data.get('amount') or getattr(self.instance, 'amount', None)
+
+        # نتأكد إن فيه category و amount
+        if category is None or amount is None:
+            raise serializers.ValidationError("Category and amount are required.")
+
+        if self.instance:
+            date = self.instance.date
+        else:
+            date = timezone.now().date()
+
+        budget = Budget.objects.filter(
+            user=user,
+            category=category,
+            month=date.month,
+            year=date.year,
+        ).first()
+
+        if not budget:
+
+            raise serializers.ValidationError(
+                "No budget is set for this category in this month."
+            )
+
+        total_spent = Expense.objects.filter(
+            user=user,
+            category=category,
+            date__year=date.year,
+            date__month=date.month,
+        ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+
+        if self.instance:
+            total_spent -= self.instance.amount
+
+        if total_spent + amount > budget.amount:
+            raise serializers.ValidationError(
+                "This expense exceeds your budget for this category in this month."
+            )
+
+        return data
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         request = self.context.get('request')
         if request and hasattr(request, 'user') and request.user.is_authenticated:
-            # هنا بنخلي الـ category_id يقبل بس الـ categories بتاعة اليوزر الحالي
             self.fields['category_id'].queryset = Category.objects.filter(user=request.user)
 
     
